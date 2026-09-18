@@ -1,0 +1,243 @@
+{
+  "mainMissions": [
+    {
+      "id": "Day1",
+      "DayMission": {
+        "topic": "Greetings & Goodbyes",
+        "description": "Learn basic German greetings, goodbyes, and polite expressions.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Introducing Yourself",
+        "description": "Learn to say your name, where you are from, and ask someone's name.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day2",
+      "DayMission": {
+        "topic": "Numbers & Age",
+        "description": "Learn German numbers from 1 to 20 and talk about age.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Personal Information",
+        "description": "Practice asking and answering simple questions about age, name, and nationality.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day3",
+      "DayMission": {
+        "topic": "Family",
+        "description": "Learn common German words for family members and relationships.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "My Family",
+        "description": "Build simple sentences describing your family.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day4",
+      "DayMission": {
+        "topic": "Food & Drinks",
+        "description": "Learn common German vocabulary for food, drinks, and meals.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Ordering Food",
+        "description": "Practice ordering food and drinks at a German restaurant or cafe.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day5",
+      "DayMission": {
+        "topic": "Daily Routine",
+        "description": "Learn common German verbs and vocabulary for everyday activities.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "My Day",
+        "description": "Describe your daily routine using simple German sentences.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day6",
+      "DayMission": {
+        "topic": "Time & Days",
+        "description": "Learn days of the week, common time expressions, and how to tell the time.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Making Plans",
+        "description": "Practice talking about when you are free and making simple plans.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day7",
+      "DayMission": {
+        "topic": "Places & Directions",
+        "description": "Learn vocabulary for common places and basic direction words.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Finding a Place",
+        "description": "Practice asking for and giving simple directions in German.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day8",
+      "DayMission": {
+        "topic": "Shopping",
+        "description": "Learn German vocabulary for shops, prices, clothes, and common products.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "At the Store",
+        "description": "Practice asking prices, choosing products, and making a purchase.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day9",
+      "DayMission": {
+        "topic": "German Sentence Building",
+        "description": "Learn basic German sentence structure and the position of verbs.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Questions & Answers",
+        "description": "Practice forming simple questions and answering them naturally.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day10",
+      "DayMission": {
+        "topic": "Review & Conversation",
+        "description": "Review the vocabulary and grammar learned during the first nine days.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "First German Conversation",
+        "description": "Complete a short conversation using greetings, introductions, numbers, family, food, time, and everyday expressions.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    }
+  ]
+}

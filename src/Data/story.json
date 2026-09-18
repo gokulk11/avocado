@@ -1,0 +1,36 @@
+{
+  "days": [
+    {
+      "day": 1,
+      "title": "The Letter",
+      "dialogues": [
+        {
+          "character": "avocado",
+          "text": "What is this?"
+        },
+        {
+          "character": "avocado",
+          "text": "I can't understand German."
+        },
+        {
+          "character": "avocado",
+          "text": "Maybe I should translate it."
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "title": "A New Morning",
+      "dialogues": [
+        {
+          "character": "avocado",
+          "text": "Good morning!"
+        },
+        {
+          "character": "avocado",
+          "text": "What should I do today?"
+        }
+      ]
+    }
+  ]
+}
