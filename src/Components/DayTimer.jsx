@@ -50,19 +50,12 @@
 //   );
 // }
 
-
-
 //Test
 
 import { useEffect, useState } from "react";
 
-export default function DayTimer({
-  testMode = false,
-  gameDayDuration = 30,
-}) {
-  const [timeLeft, setTimeLeft] = useState(
-    "00:00:00"
-  );
+export default function DayTimer({ testMode = true, gameDayDuration = 30 }) {
+  const [timeLeft, setTimeLeft] = useState("00:00:00");
 
   useEffect(() => {
     const updateTimer = () => {
@@ -72,28 +65,20 @@ export default function DayTimer({
 
       if (testMode) {
         // Get onboarding time
-        const onboardingTime =
-          localStorage.getItem(
-            "gameOnboardingTime"
-          );
+        const onboardingTime = localStorage.getItem("gameOnboardingTime");
 
         if (!onboardingTime) return;
 
-        const onboarding = new Date(
-          onboardingTime
-        );
+        const onboarding = new Date(onboardingTime);
 
         // Time passed since game started
-        const timePassed =
-          now - onboarding;
+        const timePassed = now - onboarding;
 
         // Find position inside current
         // 30-second game day
-        const elapsed =
-          timePassed % (gameDayDuration * 1000);
+        const elapsed = timePassed % (gameDayDuration * 1000);
 
-        difference =
-          gameDayDuration * 1000 - elapsed;
+        difference = gameDayDuration * 1000 - elapsed;
       } else {
         // =========================
         // NORMAL MODE
@@ -105,60 +90,40 @@ export default function DayTimer({
         next7AM.setHours(7, 0, 0, 0);
 
         if (now >= next7AM) {
-          next7AM.setDate(
-            next7AM.getDate() + 1
-          );
+          next7AM.setDate(next7AM.getDate() + 1);
         }
 
-        difference =
-          next7AM.getTime() - now.getTime();
+        difference = next7AM.getTime() - now.getTime();
       }
 
-      const totalSeconds = Math.floor(
-        difference / 1000
-      );
+      const totalSeconds = Math.floor(difference / 1000);
 
-      const hours = Math.floor(
-        totalSeconds / 3600
-      );
+      const hours = Math.floor(totalSeconds / 3600);
 
-      const minutes = Math.floor(
-        (totalSeconds % 3600) / 60
-      );
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
 
-      const seconds =
-        totalSeconds % 60;
+      const seconds = totalSeconds % 60;
 
       setTimeLeft(
-        `${String(hours).padStart(2, "0")}:${String(
-          minutes
-        ).padStart(2, "0")}:${String(
-          seconds
-        ).padStart(2, "0")}`
+        `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+          2,
+          "0",
+        )}:${String(seconds).padStart(2, "0")}`,
       );
     };
 
     updateTimer();
 
-    const timer = setInterval(
-      updateTimer,
-      1000
-    );
+    const timer = setInterval(updateTimer, 1000);
 
     return () => clearInterval(timer);
   }, [testMode, gameDayDuration]);
 
   return (
     <div className="text-center">
+      <div className="text-xs font-bold">NEXT DAY</div>
 
-      <div className="text-xs font-bold">
-        NEXT DAY
-      </div>
-
-      <div className="text-xl font-bold tracking-wider">
-        {timeLeft}
-      </div>
-
+      <div className="text-xl font-bold tracking-wider">{timeLeft}</div>
     </div>
   );
 }

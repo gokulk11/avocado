@@ -20,7 +20,7 @@ export function getGameDay() {
   // TEST MODE
   // =========================
 
-  const TEST_MODE = false;
+  const TEST_MODE = true;
 
   // 30 seconds = 1 game day
   const GAME_DAY_DURATION = 30 * 1000;
