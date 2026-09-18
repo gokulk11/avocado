@@ -1,0 +1,125 @@
+{
+  "extraQuests": [
+    {
+      "id": "Day1",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Word Hunter",
+          "description": "Find and remember 5 basic German greeting words.",
+          "reward": 20,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day2",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Number Rush",
+          "description": "Match German numbers with the correct digits.",
+          "reward": 20,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day3",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Family Match",
+          "description": "Match German family words with their meanings.",
+          "reward": 25,
+          "status": false
+          
+        }
+      ]
+    },
+    {
+      "id": "Day4",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Food Finder",
+          "description": "Identify common German food and drink words.",
+          "reward": 25,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day5",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Daily Routine",
+          "description": "Arrange German daily activities in the correct order.",
+          "reward": 30,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day6",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Time Master",
+          "description": "Choose the correct German time and day expressions.",
+          "reward": 30,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day7",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Lost Avocado",
+          "description": "Follow German directions and help Avocado find the destination.",
+          "reward": 35,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day8",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Shopping Challenge",
+          "description": "Match German shopping words with the correct items.",
+          "reward": 35,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day9",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Sentence Builder",
+          "description": "Arrange German words to create correct sentences.",
+          "reward": 40,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day10",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Avocado Final Challenge",
+          "description": "Complete a mixed challenge using everything you have learned.",
+          "reward": 50,
+          "status": false
+        }
+      ]
+    }
+  ]
+}
