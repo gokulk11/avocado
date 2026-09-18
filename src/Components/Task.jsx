@@ -7,11 +7,12 @@ import { getGameDay } from "../utils/gameDay";
 export default function Task() {
   const navigate = useNavigate();
 
-  const [gameDay, setGameDay] = useState(getGameDay());
+  const [gameDay, setGameDay] = useState(Math.min(getGameDay(), 30));
 
   useEffect(() => {
     const updateDay = () => {
-      setGameDay(getGameDay());
+      const day = Math.min(getGameDay(), 30);
+      setGameDay(day);
     };
 
     updateDay();
@@ -28,6 +29,12 @@ export default function Task() {
 
   // No mission
   if (!dayData) {
+    console.log("Missing mission for:", `Day${gameDay}`);
+    console.log(
+      "Available days:",
+      missionsData.mainMissions.map((item) => item.id),
+    );
+
     return (
       <section>
         <div className="mt-[80px]">No missions available for Day {gameDay}</div>
@@ -37,16 +44,13 @@ export default function Task() {
 
   return (
     <section className="space-y-4">
-      {/* ===================== */}
       {/* DAY MISSION */}
-      {/* ===================== */}
-
       <div
         onClick={() => navigate("/mission/day")}
         className="border-3 rounded-sm mt-[80px] opacity-90 bg-amber-200 h-[100px] cursor-pointer"
       >
         <div className="flex border h-full p-3">
-          <img className="w-[70px] my-auto h-max" src="./Book2.png" alt="" />
+          <img className="w-[70px] my-auto h-max" src="/Book2.png" alt="" />
 
           <div className="leading-4 w-[200px] overflow-hidden mx-3">
             <h3>Day Mission</h3>
@@ -58,16 +62,13 @@ export default function Task() {
         </div>
       </div>
 
-      {/* ===================== */}
       {/* NIGHT MISSION */}
-      {/* ===================== */}
-
       <div
         onClick={() => navigate("/mission/night")}
         className="border-3 rounded-sm opacity-90 bg-indigo-200 h-[100px] cursor-pointer"
       >
         <div className="flex border h-full p-3">
-          <img className="w-[70px] my-auto h-max" src="./Book2.png" alt="" />
+          <img className="w-[70px] my-auto h-max" src="/Book2.png" alt="" />
 
           <div className="leading-4 w-[200px] overflow-hidden mx-3">
             <h3>Night Mission</h3>

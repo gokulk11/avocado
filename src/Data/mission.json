@@ -238,6 +238,486 @@
           "Pronunciation": 0
         }
       }
+    },
+
+    {
+      "id": "Day11",
+      "DayMission": {
+        "topic": "Home & Rooms",
+        "description": "Learn German vocabulary for rooms, furniture, and objects around the home.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Describing Your Home",
+        "description": "Practice describing your home and where things are located.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day12",
+      "DayMission": {
+        "topic": "Hobbies & Free Time",
+        "description": "Learn vocabulary for hobbies, sports, music, and free-time activities.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Talking About Hobbies",
+        "description": "Practice talking about what you like and dislike doing in your free time.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day13",
+      "DayMission": {
+        "topic": "Weather",
+        "description": "Learn German vocabulary for weather, seasons, temperature, and conditions.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Talking About Weather",
+        "description": "Practice describing today's weather and discussing the forecast.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day14",
+      "DayMission": {
+        "topic": "Work & Jobs",
+        "description": "Learn German vocabulary for common jobs, workplaces, and professional activities.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Talking About Work",
+        "description": "Practice describing your job, workplace, and daily work activities.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day15",
+      "DayMission": {
+        "topic": "German Articles",
+        "description": "Learn der, die, das and understand basic German noun genders.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Articles in Sentences",
+        "description": "Practice using German articles correctly with common nouns.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day16",
+      "DayMission": {
+        "topic": "Accusative Case",
+        "description": "Learn the basic accusative case and how articles change after certain verbs.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Accusative Practice",
+        "description": "Practice building simple sentences using the accusative case.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day17",
+      "DayMission": {
+        "topic": "Modal Verbs",
+        "description": "Learn können, müssen, wollen, sollen, dürfen, and mögen.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Expressing Ability & Necessity",
+        "description": "Practice talking about what you can, must, want, and should do.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day18",
+      "DayMission": {
+        "topic": "Separable Verbs",
+        "description": "Learn common separable verbs and understand how they work in German sentences.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Separable Verb Practice",
+        "description": "Practice using separable verbs in everyday conversations.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day19",
+      "DayMission": {
+        "topic": "Dative Case",
+        "description": "Learn the basic dative case and common verbs that require dative objects.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Dative Practice",
+        "description": "Practice using dative articles and pronouns in simple sentences.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day20",
+      "DayMission": {
+        "topic": "Reflexive Verbs",
+        "description": "Learn common reflexive verbs and how to use reflexive pronouns.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Daily Life With Reflexive Verbs",
+        "description": "Practice using reflexive verbs to describe everyday activities.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day21",
+      "DayMission": {
+        "topic": "Past Tense",
+        "description": "Learn the basics of the German Perfekt tense for talking about past events.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Talking About Yesterday",
+        "description": "Practice describing things you did yesterday using the Perfekt tense.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day22",
+      "DayMission": {
+        "topic": "Travel & Transport",
+        "description": "Learn German vocabulary for trains, buses, airports, tickets, and travel.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Travel Conversation",
+        "description": "Practice buying tickets, asking about transport, and discussing travel plans.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day23",
+      "DayMission": {
+        "topic": "Health & Body",
+        "description": "Learn German vocabulary for body parts, common symptoms, and basic health situations.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "At the Doctor",
+        "description": "Practice explaining simple symptoms and communicating with a doctor in German.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day24",
+      "DayMission": {
+        "topic": "Comparisons",
+        "description": "Learn how to compare people, objects, places, and experiences in German.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Making Comparisons",
+        "description": "Practice using comparative and superlative forms in everyday sentences.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day25",
+      "DayMission": {
+        "topic": "Conjunctions",
+        "description": "Learn common German conjunctions such as und, aber, oder, denn, and weil.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Connecting Sentences",
+        "description": "Practice combining ideas and building longer German sentences.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day26",
+      "DayMission": {
+        "topic": "Subordinate Clauses",
+        "description": "Learn basic subordinate clauses and understand verb position after weil and dass.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Explaining Reasons",
+        "description": "Practice explaining reasons and opinions using weil and dass.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day27",
+      "DayMission": {
+        "topic": "Opinions & Preferences",
+        "description": "Learn useful expressions for giving opinions, agreeing, disagreeing, and expressing preferences.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Discussion Practice",
+        "description": "Practice expressing and defending simple opinions in German.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day28",
+      "DayMission": {
+        "topic": "Real-Life Conversations",
+        "description": "Practice German expressions used in common everyday situations.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Conversation Challenge",
+        "description": "Complete several short conversations using vocabulary and grammar from previous days.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day29",
+      "DayMission": {
+        "topic": "Complete German Review",
+        "description": "Review important vocabulary, grammar, sentence structures, and expressions from the previous 28 days.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "German Skills Test",
+        "description": "Test your vocabulary, grammar, reading, and pronunciation skills with a mixed challenge.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
+    },
+
+    {
+      "id": "Day30",
+      "DayMission": {
+        "topic": "The Final German Journey",
+        "description": "Complete a final challenge covering the most important German skills learned throughout the journey.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      },
+      "NightMission": {
+        "topic": "Final German Conversation",
+        "description": "Complete a full German conversation using greetings, personal information, family, food, travel, work, grammar, opinions, and everyday expressions.",
+        "status": false,
+        "Result": {
+          "Vocabulary": 0,
+          "Grammar": 0,
+          "Pronunciation": 0
+        }
+      }
     }
   ]
 }

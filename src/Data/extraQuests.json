@@ -33,7 +33,6 @@
           "description": "Match German family words with their meanings.",
           "reward": 25,
           "status": false
-          
         }
       ]
     },
@@ -114,9 +113,249 @@
       "quests": [
         {
           "id": 1,
-          "title": "Avocado Final Challenge",
-          "description": "Complete a mixed challenge using everything you have learned.",
+          "title": "Verb Sprint",
+          "description": "Choose the correct German verb forms to complete each sentence.",
+          "reward": 40,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day11",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Home Explorer",
+          "description": "Match German words for rooms and household objects.",
+          "reward": 45,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day12",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Adjective Match",
+          "description": "Match German adjectives with the correct descriptions.",
+          "reward": 45,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day13",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Weather Watch",
+          "description": "Identify German words and expressions used to describe the weather.",
           "reward": 50,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day14",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Travel Ticket",
+          "description": "Help Avocado understand German travel and transportation phrases.",
+          "reward": 50,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day15",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Question Master",
+          "description": "Choose the correct German question words to complete conversations.",
+          "reward": 55,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day16",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Accusative Attack",
+          "description": "Identify the correct accusative articles in German sentences.",
+          "reward": 55,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day17",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Dative Detective",
+          "description": "Find the correct dative forms hidden in German sentences.",
+          "reward": 60,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day18",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Preposition Puzzle",
+          "description": "Choose the correct German preposition for each situation.",
+          "reward": 60,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day19",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Perfect Tense",
+          "description": "Build German sentences using the correct Perfekt forms.",
+          "reward": 65,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day20",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Grammar Boss",
+          "description": "Complete a mixed grammar challenge covering everything learned so far.",
+          "reward": 70,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day21",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Conversation Starter",
+          "description": "Choose the correct German responses in everyday conversations.",
+          "reward": 70,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day22",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Opinion Maker",
+          "description": "Build German sentences for expressing opinions and preferences.",
+          "reward": 75,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day23",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Connector Challenge",
+          "description": "Use German connecting words to combine sentences correctly.",
+          "reward": 75,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day24",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Listening Hunter",
+          "description": "Identify key German words and meanings from short conversations.",
+          "reward": 80,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day25",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Reading Detective",
+          "description": "Read a short German text and find the correct information.",
+          "reward": 80,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day26",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Word Order Wizard",
+          "description": "Arrange German words in the correct sentence order.",
+          "reward": 85,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day27",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Avocado Interview",
+          "description": "Complete a German interview using appropriate questions and answers.",
+          "reward": 85,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day28",
+      "quests": [
+        {
+          "id": 1,
+          "title": "German Survival",
+          "description": "Complete a mixed real-life German communication challenge.",
+          "reward": 90,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day29",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Final Preparation",
+          "description": "Complete a full German review before the final challenge.",
+          "reward": 100,
+          "status": false
+        }
+      ]
+    },
+    {
+      "id": "Day30",
+      "quests": [
+        {
+          "id": 1,
+          "title": "Avocado Final Challenge",
+          "description": "Complete a mixed German challenge using everything you have learned.",
+          "reward": 150,
           "status": false
         }
       ]
