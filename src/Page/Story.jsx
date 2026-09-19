@@ -1,12 +1,10 @@
 import { useParams } from "react-router-dom";
-import stories from "../Data/story.json"
+import stories from "../data/story.json";
 
 export default function Story() {
   const { day } = useParams();
 
-  const currentDay = stories.days.find(
-    (story) => story.day === Number(day)
-  );
+  const currentDay = stories.days.find((story) => story.day === Number(day));
 
   if (!currentDay) {
     return <h1>Story not found</h1>;
