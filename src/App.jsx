@@ -7,6 +7,7 @@ import Story from "./Page/Story";
 import Mission from "./Page/Mission";
 import Walk from "./Page/Walk";
 import ExtraQuestPage from "./Page/ExtraQuestPage";
+import Trail from "./Page/Trail";
 
 import { isOnboardingComplete } from "./utils/onboarding";
 
@@ -38,6 +39,7 @@ function App() {
           <Route path="/mission/:type" element={<Mission />} />
 
           <Route path="/extra-quest" element={<ExtraQuestPage />} />
+          <Route path="/trail" element={<Trail />} />
         </Routes>
       </section>
     </BrowserRouter>

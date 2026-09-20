@@ -11,7 +11,7 @@ body,
 }
 @font-face {
   font-family: "Pixel Operator";
-  src: url("/fonts/PixelOperatorSC.woff") format("woff");
+  src: url("/fonts/PixelOperatorSC.tff") format("ttf");
   font-weight: normal;
   font-style: normal;
 }
