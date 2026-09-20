@@ -53,7 +53,7 @@ export default function Task() {
           <img className="w-[70px] my-auto h-max" src="/Book2.png" alt="" />
 
           <div className="leading-4 w-[200px] overflow-hidden mx-3">
-            <h3>Day Mission</h3>
+            <h3 className=" font-bold">Day Mission</h3>
 
             <h6>{dayData.DayMission.topic}</h6>
 
@@ -71,7 +71,7 @@ export default function Task() {
           <img className="w-[70px] my-auto h-max" src="/Book2.png" alt="" />
 
           <div className="leading-4 w-[200px] overflow-hidden mx-3">
-            <h3>Night Mission</h3>
+            <h3 className=" font-bold">Night Mission</h3>
 
             <h6>{dayData.NightMission.topic}</h6>
 

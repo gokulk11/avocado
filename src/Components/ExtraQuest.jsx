@@ -37,7 +37,7 @@ export default function ExtraQuest() {
         onClick={() => navigate("/extra-quest")}
         className="border-3 rounded-sm mt-6 opacity-90 bg-green-200 h-[100px]"
       >
-        <div className="flex border h-full p-3">
+        <div className="flex border h-full p-3 overflow-hidden">
           <img
             className="w-[70px] my-auto h-max"
             src="/Book2.png"
@@ -49,7 +49,7 @@ export default function ExtraQuest() {
 
             <h6 className="font-bold">{quest.title}</h6>
 
-            <span>{quest.description}</span>
+            <span className="">{quest.description}</span>
           </div>
         </div>
       </div>

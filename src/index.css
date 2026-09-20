@@ -6,7 +6,16 @@ body,
   padding: 0;
   width: 100%;
   min-height: 100%;
+  font-family: "Pixel Operator", monospace;
+  
 }
-body {
-  font-family: "Pixelify Sans", sans-serif;
+@font-face {
+  font-family: "Pixel Operator";
+  src: url("/fonts/PixelOperatorSC.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.pixel-font {
+  font-family: "Pixel Operator", monospace;
 }

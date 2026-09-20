@@ -22,4 +22,8 @@ node_modules/
 *.ntvs*
 *.njsproj
 *.sln
+.env
 *.sw?
+
+.vercel
+.env*
