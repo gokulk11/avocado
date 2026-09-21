@@ -1,90 +1,246 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import missionData from "../data/mission.json";
 
 export default function Trail() {
   const navigate = useNavigate();
 
-  const missionResults = JSON.parse(
-    localStorage.getItem("missionResults") || "{}"
-  );
+  const [user, setUser] = useState(null);
+  const [progress, setProgress] = useState(null);
+  const [missions, setMissions] = useState([]);
+  const [sideQuests, setSideQuests] = useState([]);
 
-  const completedMissions = JSON.parse(
-    localStorage.getItem("completedMissions") || "[]"
-  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // Flatten all missions from every day
-  const missions = useMemo(() => {
-    const result = [];
+  // --------------------------------
+  // Get logged-in user
+  // --------------------------------
 
-    missionData.mainMissions.forEach((day) => {
-      if (day.DayMission) {
-        result.push({
-          ...day.DayMission,
-          day: day.id,
-          type: "Day",
-          missionId: `${day.id}-day`,
-        });
+  const userId = localStorage.getItem("userId");
+
+  // --------------------------------
+  // Fetch player data
+  // --------------------------------
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!userId) {
+        setError("No logged-in user found.");
+        setLoading(false);
+        return;
       }
 
-      if (day.NightMission) {
-        result.push({
-          ...day.NightMission,
-          day: day.id,
-          type: "Night",
-          missionId: `${day.id}-night`,
-        });
+      try {
+        setLoading(true);
+        setError("");
+
+        // Get user
+        const userResponse = await fetch(
+          `/api/users/${userId}`
+        );
+
+        if (!userResponse.ok) {
+          throw new Error("Failed to load user");
+        }
+
+        const userData = await userResponse.json();
+
+        // Get progress
+        const progressResponse = await fetch(
+          `/api/progress/${userId}`
+        );
+
+        if (!progressResponse.ok) {
+          throw new Error("Failed to load progress");
+        }
+
+        const progressData = await progressResponse.json();
+
+        // Get missions
+        const missionsResponse = await fetch(
+          `/api/missions`
+        );
+
+        if (!missionsResponse.ok) {
+          throw new Error("Failed to load missions");
+        }
+
+        const missionsData = await missionsResponse.json();
+
+        // Get side quests
+        const sideQuestResponse = await fetch(
+          `/api/side-quests`
+        );
+
+        if (!sideQuestResponse.ok) {
+          throw new Error("Failed to load side quests");
+        }
+
+        const sideQuestData =
+          await sideQuestResponse.json();
+
+        setUser(userData.user);
+        setProgress(progressData.progress);
+        setMissions(missionsData.missions || []);
+        setSideQuests(
+          sideQuestData.sideQuests || []
+        );
+      } catch (error) {
+        console.error(
+          "Trail loading error:",
+          error
+        );
+
+        setError(
+          error.message ||
+            "Failed to load learning trail."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [userId]);
+
+  // --------------------------------
+  // Main mission completion check
+  // --------------------------------
+
+  const isMissionCompleted = (day, session) => {
+    if (!progress?.completedMissions) {
+      return false;
+    }
+
+    return progress.completedMissions.some(
+      (mission) =>
+        mission.day === day &&
+        mission.session === session
+    );
+  };
+
+  // --------------------------------
+  // Side quest completion check
+  // --------------------------------
+
+  const isSideQuestCompleted = (questId) => {
+    if (!progress?.completedSideQuests) {
+      return false;
+    }
+
+    return progress.completedSideQuests.some(
+      (quest) =>
+        String(quest.questId) === String(questId)
+    );
+  };
+
+  // --------------------------------
+  // Group missions by day
+  // --------------------------------
+
+  const missionsByDay = useMemo(() => {
+    const days = {};
+
+    missions.forEach((mission) => {
+      if (!days[mission.day]) {
+        days[mission.day] = {
+          day: mission.day,
+          dayMission: null,
+          nightMission: null,
+        };
+      }
+
+      if (mission.session === "day") {
+        days[mission.day].dayMission =
+          mission;
+      }
+
+      if (mission.session === "night") {
+        days[mission.day].nightMission =
+          mission;
       }
     });
 
-    return result;
-  }, []);
+    return Object.values(days).sort(
+      (a, b) => a.day - b.day
+    );
+  }, [missions]);
 
-  const getResult = (missionId) => {
-    return missionResults[missionId]?.Result || null;
-  };
+  // --------------------------------
+  // Statistics
+  // --------------------------------
 
-  const isCompleted = (missionId) => {
-    return completedMissions.includes(missionId);
-  };
+  const completedMainMissions =
+    progress?.completedMissions?.length || 0;
 
-  const getAverage = (result) => {
-    if (!result) return null;
+  const completedSideQuests =
+    progress?.completedSideQuests?.length || 0;
 
-    const values = [
-      result.Vocabulary,
-      result.Grammar,
-      result.Pronunciation,
-    ].filter((value) => typeof value === "number");
+  const totalMissions =
+    missions.length;
 
-    if (!values.length) return null;
+  const totalSideQuests =
+    sideQuests.length;
 
+  const totalCompleted =
+    completedMainMissions +
+    completedSideQuests;
+
+  const totalAvailable =
+    totalMissions +
+    totalSideQuests;
+
+  const progressPercentage =
+    totalAvailable > 0
+      ? Math.round(
+          (totalCompleted /
+            totalAvailable) *
+            100
+        )
+      : 0;
+
+  // --------------------------------
+  // Loading
+  // --------------------------------
+
+  if (loading) {
     return (
-      values.reduce((sum, value) => sum + value, 0) / values.length
-    ).toFixed(1);
-  };
+      <div className="min-h-screen bg-[#123f35] text-white flex items-center justify-center">
+        <p className="font-bold">
+          Loading your learning trail...
+        </p>
+      </div>
+    );
+  }
 
-  const completedCount = missions.filter((mission) =>
-    isCompleted(mission.missionId)
-  ).length;
+  // --------------------------------
+  // Error
+  // --------------------------------
 
-  const averageScore = (() => {
-    const scores = missions
-      .map((mission) => getAverage(getResult(mission.missionId)))
-      .filter(Boolean)
-      .map(Number);
-
-    if (!scores.length) return "0.0";
-
+  if (error) {
     return (
-      scores.reduce((sum, score) => sum + score, 0) / scores.length
-    ).toFixed(1);
-  })();
+      <div className="min-h-screen bg-[#123f35] text-white flex flex-col items-center justify-center px-4">
+        <p className="text-red-300 font-bold mb-4">
+          {error}
+        </p>
+
+        <button
+          onClick={() => navigate("/")}
+          className="bg-[#d59b54] border-4 border-black px-4 py-2 text-black font-bold shadow-[4px_4px_0px_#000]"
+        >
+          ← Back Home
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#123f35] text-white px-4 py-5 pb-24">
-      
+
+      {/* -------------------------------- */}
       {/* Header */}
+      {/* -------------------------------- */}
+
       <div className="flex items-center justify-between mb-5">
         <button
           onClick={() => navigate("/")}
@@ -116,7 +272,10 @@ export default function Trail() {
         <div className="w-[70px]" />
       </div>
 
-      {/* Intro */}
+      {/* -------------------------------- */}
+      {/* Player */}
+      {/* -------------------------------- */}
+
       <div
         className="
           bg-[#075044]
@@ -126,78 +285,249 @@ export default function Trail() {
           mb-5
         "
       >
-        <h2 className="text-xl font-bold mb-1">
-          Your Journey So Far
+        <p className="text-xs text-green-200">
+          PLAYER
+        </p>
+
+        <h2 className="text-2xl font-bold">
+          👋 {user?.name || "Player"}
         </h2>
 
-        <p className="text-sm text-green-100">
-          Look back at your missions, see your progress,
-          and track your German journey.
+        <p className="text-sm text-green-100 mt-1">
+          Your German learning journey
         </p>
       </div>
 
+      {/* -------------------------------- */}
       {/* Statistics */}
-      <div className="grid grid-cols-2 gap-2 mb-6">
+      {/* -------------------------------- */}
+
+      <div className="grid grid-cols-2 gap-2 mb-4">
 
         <StatCard
-          icon="✓"
-          value={completedCount}
-          label="Completed"
+          icon="📚"
+          value={completedMainMissions}
+          label="Main Completed"
         />
 
         <StatCard
           icon="⭐"
-          value={averageScore}
-          label="Average"
+          value={completedSideQuests}
+          label="Side Completed"
         />
 
         <StatCard
-          icon="🎯"
-          value={missions.length}
-          label="Total Missions"
+          icon="✓"
+          value={totalCompleted}
+          label="Total Completed"
         />
 
         <StatCard
           icon="🥑"
-          value={`${completedCount}/${missions.length}`}
-          label="Progress"
+          value={`${progressPercentage}%`}
+          label="Overall Progress"
         />
 
       </div>
 
-      {/* Trail title */}
+      {/* -------------------------------- */}
+      {/* Progress Bar */}
+      {/* -------------------------------- */}
+
+      <div
+        className="
+          bg-[#f5e7c8]
+          border-4 border-black
+          p-3
+          shadow-[4px_4px_0px_#000]
+          mb-6
+        "
+      >
+        <div className="flex justify-between text-black text-xs font-bold mb-2">
+          <span>JOURNEY PROGRESS</span>
+
+          <span>
+            {totalCompleted}/{totalAvailable}
+          </span>
+        </div>
+
+        <div className="h-5 bg-gray-300 border-2 border-black">
+          <div
+            className="h-full bg-green-500"
+            style={{
+              width: `${progressPercentage}%`,
+            }}
+          />
+        </div>
+      </div>
+
+      {/* -------------------------------- */}
+      {/* Journey */}
+      {/* -------------------------------- */}
+
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-xl font-bold">
           Mission Trail
         </h2>
 
         <span className="text-xs text-green-200">
-          {completedCount} completed
+          {completedMainMissions}/{totalMissions}
         </span>
       </div>
 
-      {/* Mission list */}
-      <div className="space-y-3">
+      {/* -------------------------------- */}
+      {/* Days */}
+      {/* -------------------------------- */}
 
-        {missions.map((mission, index) => {
-          const result = getResult(mission.missionId);
-          const completed = isCompleted(mission.missionId);
-          const average = getAverage(result);
+      <div className="space-y-4">
+
+        {missionsByDay.map((day) => {
+
+          const dayCompleted =
+            day.dayMission &&
+            isMissionCompleted(
+              day.day,
+              "day"
+            );
+
+          const nightCompleted =
+            day.nightMission &&
+            isMissionCompleted(
+              day.day,
+              "night"
+            );
+
+          const daySideQuests =
+            sideQuests.filter(
+              (quest) =>
+                quest.day === day.day
+            );
 
           return (
-            <MissionCard
-              key={mission.missionId}
-              mission={mission}
-              result={result}
-              completed={completed}
-              average={average}
-              index={index}
-              onClick={() => {
-                if (completed) {
-                  navigate(`/mission/${mission.type.toLowerCase()}`);
-                }
-              }}
-            />
+            <div
+              key={day.day}
+              className="
+                bg-[#075044]
+                border-4 border-black
+                p-3
+                shadow-[4px_4px_0px_#000]
+              "
+            >
+
+              {/* Day header */}
+
+              <div className="flex items-center gap-3 mb-3">
+
+                <div
+                  className="
+                    w-12
+                    h-12
+                    shrink-0
+                    bg-[#176b48]
+                    border-2 border-black
+                    text-white
+                    flex
+                    flex-col
+                    items-center
+                    justify-center
+                    font-bold
+                  "
+                >
+                  <span className="text-[10px]">
+                    DAY
+                  </span>
+
+                  <span className="text-lg">
+                    {day.day}
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="font-bold text-lg">
+                    Day {day.day}
+                  </h3>
+
+                  <p className="text-xs text-green-200">
+                    Your progress
+                  </p>
+                </div>
+
+              </div>
+
+              {/* Day Mission */}
+
+              {day.dayMission && (
+                <ProgressItem
+                  title={day.dayMission.topic}
+                  type="Day Mission"
+                  completed={dayCompleted}
+                  onClick={() => {
+                    if (dayCompleted) {
+                      navigate("/mission/day");
+                    }
+                  }}
+                />
+              )}
+
+              {/* Night Mission */}
+
+              {day.nightMission && (
+                <ProgressItem
+                  title={day.nightMission.topic}
+                  type="Night Mission"
+                  completed={nightCompleted}
+                  onClick={() => {
+                    if (nightCompleted) {
+                      navigate("/mission/night");
+                    }
+                  }}
+                />
+              )}
+
+              {/* Side Quests */}
+
+              {daySideQuests.map((quest) => {
+                const completed =
+                  isSideQuestCompleted(
+                    quest._id
+                  );
+
+                return (
+                  <ProgressItem
+                    key={quest._id}
+                    title={
+                      quest.topic ||
+                      "Side Quest"
+                    }
+                    type="Side Quest"
+                    completed={completed}
+                    onClick={() => {
+                      if (completed) {
+                        navigate(
+                          "/extra-quest"
+                        );
+                      }
+                    }}
+                  />
+                );
+              })}
+
+              {/* If nothing completed */}
+
+              {!dayCompleted &&
+                !nightCompleted &&
+                daySideQuests.every(
+                  (quest) =>
+                    !isSideQuestCompleted(
+                      quest._id
+                    )
+                ) && (
+                  <div className="mt-3 bg-red-200 text-black border-2 border-black p-2 text-xs font-bold">
+                    No missions completed yet.
+                  </div>
+                )}
+
+            </div>
           );
         })}
 
@@ -207,9 +537,15 @@ export default function Trail() {
 }
 
 
-/* ---------------- STAT CARD ---------------- */
+/* -------------------------------- */
+/* STAT CARD */
+/* -------------------------------- */
 
-function StatCard({ icon, value, label }) {
+function StatCard({
+  icon,
+  value,
+  label,
+}) {
   return (
     <div
       className="
@@ -221,7 +557,9 @@ function StatCard({ icon, value, label }) {
         shadow-[4px_4px_0px_#000]
       "
     >
-      <div className="text-xl">{icon}</div>
+      <div className="text-xl">
+        {icon}
+      </div>
 
       <div className="text-xl font-bold">
         {value}
@@ -235,164 +573,95 @@ function StatCard({ icon, value, label }) {
 }
 
 
-/* ---------------- MISSION CARD ---------------- */
+/* -------------------------------- */
+/* PROGRESS ITEM */
+/* -------------------------------- */
 
-function MissionCard({
-  mission,
-  result,
+function ProgressItem({
+  title,
+  type,
   completed,
-  average,
-  index,
   onClick,
 }) {
   return (
     <div
       onClick={onClick}
       className={`
-        relative
-        border-4 border-black
+        border-2
+        border-black
         p-3
+        mb-2
         flex
-        gap-3
         items-center
-        shadow-[4px_4px_0px_#000]
+        gap-3
         ${
           completed
             ? "bg-[#f5e7c8] text-black cursor-pointer"
-            : "bg-[#d1d5db] text-gray-700 opacity-90"
+            : "bg-gray-300 text-gray-700"
         }
       `}
     >
 
-      {/* Day number */}
+      {/* Status */}
+
       <div
-        className="
-          w-12
-          h-12
+        className={`
+          w-8
+          h-8
           shrink-0
-          bg-[#176b48]
-          border-2 border-black
-          text-white
+          border-2
+          border-black
           flex
-          flex-col
           items-center
           justify-center
           font-bold
-        "
+          ${
+            completed
+              ? "bg-green-500 text-black"
+              : "bg-gray-400 text-black"
+          }
+        `}
       >
-        <span className="text-[10px]">
-          DAY
-        </span>
-
-        <span className="text-lg">
-          {mission.day.replace("Day", "")}
-        </span>
+        {completed ? "✓" : "!"}
       </div>
 
       {/* Content */}
+
       <div className="flex-1 min-w-0">
 
-        <div className="flex justify-between items-start gap-2">
+        <p className="text-[10px] font-bold uppercase opacity-60">
+          {type}
+        </p>
 
-          <div>
-            <h3 className="font-bold text-base">
-              {mission.topic}
-            </h3>
-
-            <p className="text-xs opacity-70">
-              {mission.type} Mission
-            </p>
-          </div>
-
-          {/* Status */}
-          <span
-            className={`
-              text-[10px]
-              font-bold
-              px-2
-              py-1
-              border-2 border-black
-              whitespace-nowrap
-              ${
-                completed
-                  ? "bg-green-500 text-black"
-                  : "bg-gray-400 text-black"
-              }
-            `}
-          >
-            {completed ? "COMPLETED" : "LOCKED"}
-          </span>
-
-        </div>
-
-        {/* Scores */}
-        <div className="flex gap-1 mt-2 flex-wrap">
-
-          <Score
-            label="V"
-            value={result?.Vocabulary}
-          />
-
-          <Score
-            label="G"
-            value={result?.Grammar}
-          />
-
-          <Score
-            label="P"
-            value={result?.Pronunciation}
-          />
-
-          {average && (
-            <div
-              className="
-                ml-auto
-                text-xs
-                font-bold
-                bg-yellow-300
-                border-2 border-black
-                px-2
-                py-1
-              "
-            >
-              ⭐ {average}
-            </div>
-          )}
-
-        </div>
+        <h4 className="font-bold text-sm">
+          {title}
+        </h4>
 
       </div>
 
-      {/* Arrow */}
-      {completed && (
-        <div className="text-xl font-bold">
-          →
-        </div>
-      )}
+      {/* Status text */}
 
-    </div>
-  );
-}
+      <span
+        className={`
+          text-[9px]
+          font-bold
+          px-2
+          py-1
+          border-2
+          border-black
+          whitespace-nowrap
+          ${
+            completed
+              ? "bg-green-500 text-black"
+              : "bg-red-300 text-black"
+          }
+        `}
+      >
+        {completed
+          ? "COMPLETED"
+          : "NOT COMPLETED"}
+      </span>
 
-
-/* ---------------- SCORE ---------------- */
-
-function Score({ label, value }) {
-  return (
-    <div
-      className="
-        bg-white
-        border-2 border-black
-        px-2
-        py-1
-        text-xs
-        font-bold
-      "
-    >
-      <span className="text-gray-500">
-        {label}
-      </span>{" "}
-      {typeof value === "number" ? value : "-"}
     </div>
   );
 }

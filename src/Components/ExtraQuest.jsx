@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import extraQuestData from "../data/extraQuests.json";
 import { getGameDay } from "../utils/gameDay";
 
 export default function ExtraQuest() {
   const [gameDay, setGameDay] = useState(getGameDay());
+  const [quest, setQuest] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
+
+  // Update game day
   useEffect(() => {
     const updateDay = () => {
       setGameDay(getGameDay());
@@ -18,18 +22,44 @@ export default function ExtraQuest() {
     return () => clearInterval(timer);
   }, []);
 
-  // Find the current day's extra quest
-  const dayData = extraQuestData.extraQuests.find(
-    (item) => item.id === `Day${gameDay}`,
-  );
+  // Fetch extra quest from MongoDB
+  useEffect(() => {
+    const fetchQuest = async () => {
+      try {
+        setLoading(true);
 
-  // No quest available for this day
-  if (!dayData || !dayData.quests.length) {
+        const response = await fetch(
+          `/api/side-quests/day?day=${gameDay}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch extra quest");
+        }
+
+        const data = await response.json();
+
+        // API returns sideQuests
+        setQuest(data.sideQuests?.[0] || null);
+      } catch (error) {
+        console.error("Error fetching extra quest:", error);
+        setQuest(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuest();
+  }, [gameDay]);
+
+  // While loading
+  if (loading) {
     return null;
   }
 
-  // For now, show the first extra quest
-  const quest = dayData.quests[0];
+  // No quest available
+  if (!quest) {
+    return null;
+  }
 
   return (
     <section>
@@ -47,9 +77,9 @@ export default function ExtraQuest() {
           <div className="leading-4 w-[200px] overflow-hidden mx-3 my-auto">
             <h3 className="font-bold">Extra Quest</h3>
 
-            <h6 className="font-bold">{quest.title}</h6>
+            <h6 className="font-bold">{quest.topic}</h6>
 
-            <span className="">{quest.description}</span>
+            <span>{quest.description}</span>
           </div>
         </div>
       </div>

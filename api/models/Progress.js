@@ -6,55 +6,79 @@ const progressSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      unique: true,
       index: true,
     },
 
-    missionId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Mission",
-      required: true,
-      index: true,
+    currentDay: {
+      type: Number,
+      default: 1,
+      min: 1,
+      max: 30,
     },
 
-    completed: {
-      type: Boolean,
-      default: false,
-    },
+    completedMissions: [
+      {
+        day: {
+          type: Number,
+          required: true,
+          min: 1,
+          max: 30,
+        },
 
-    score: {
+        session: {
+          type: String,
+          enum: ["day", "night"],
+          required: true,
+        },
+
+        completedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+
+    completedSideQuests: [
+      {
+        questId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "SideQuest",
+          required: true,
+        },
+
+        completedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+
+    totalRewards: {
       type: Number,
       default: 0,
+      min: 0,
     },
 
-    result: {
-      vocabulary: {
-        type: Number,
-        default: 0,
-      },
-
-      grammar: {
-        type: Number,
-        default: 0,
-      },
-
-      pronunciation: {
-        type: Number,
-        default: 0,
-      },
+    streak: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
 
-    completedAt: {
+    lastActiveDate: {
       type: Date,
+      default: null,
+    },
+
+    gameStartedAt: {
+      type: Date,
+      default: Date.now,
     },
   },
   {
     timestamps: true,
   }
-);
-
-progressSchema.index(
-  { userId: 1, missionId: 1 },
-  { unique: true }
 );
 
 export default mongoose.models.Progress ||
