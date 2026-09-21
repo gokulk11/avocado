@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { getGameDay } from "../utils/gameDay";
 
-export default function Task() {
+export default function Task({ progress }) {
   const navigate = useNavigate();
 
   const [gameDay, setGameDay] = useState(
@@ -64,7 +64,6 @@ export default function Task() {
     fetchMissions();
   }, [gameDay]);
 
-  // Find day and night missions
   const dayMission = missions.find(
     (mission) => mission.session === "day"
   );
@@ -73,7 +72,19 @@ export default function Task() {
     (mission) => mission.session === "night"
   );
 
-  // Loading
+  const completedMissions =
+    progress?.completedMissions || [];
+
+  const isCompleted = (session) =>
+    completedMissions.some(
+      (mission) =>
+        mission.day === Number(gameDay) &&
+        mission.session === session
+    );
+
+  const dayCompleted = isCompleted("day");
+  const nightCompleted = isCompleted("night");
+
   if (loading) {
     return (
       <section>
@@ -84,7 +95,6 @@ export default function Task() {
     );
   }
 
-  // Error
   if (error) {
     return (
       <section>
@@ -95,10 +105,7 @@ export default function Task() {
     );
   }
 
-  // No missions
   if (!dayMission && !nightMission) {
-    console.log("No missions found for:", gameDay);
-
     return (
       <section>
         <div className="mt-[80px]">
@@ -108,14 +115,28 @@ export default function Task() {
     );
   }
 
+  const openMission = (session, completed) => {
+    navigate(`/mission/${session}`, {
+      state: {
+        completed,
+      },
+    });
+  };
+
   return (
     <section className="space-y-4">
 
       {/* DAY MISSION */}
       {dayMission && (
         <div
-          onClick={() => navigate("/mission/day")}
-          className="border-3 rounded-sm mt-[80px] opacity-90 bg-amber-200 h-[100px] cursor-pointer"
+          onClick={() =>
+            openMission("day", dayCompleted)
+          }
+          className={`border-3 rounded-sm mt-[80px] opacity-90 h-[100px] cursor-pointer ${
+            dayCompleted
+              ? "bg-green-200"
+              : "bg-amber-200"
+          }`}
         >
           <div className="flex border h-full p-3">
 
@@ -126,19 +147,29 @@ export default function Task() {
             />
 
             <div className="leading-4 w-[200px] overflow-hidden mx-3">
-              <h3 className="font-bold">
-                Day Mission
-              </h3>
 
-              <h6>
-                {dayMission.topic}
-              </h6>
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold">
+                  Day Mission
+                </h3>
 
-              <span>
-                {dayMission.description}
-              </span>
+                {dayCompleted && (
+                  <span className="text-green-700 font-bold">
+                    ✓
+                  </span>
+                )}
+              </div>
+
+              <h6>{dayMission.topic}</h6>
+
+              <span>{dayMission.description}</span>
+
+              {dayCompleted && (
+                <div className="text-green-700 font-bold mt-1">
+                  ✅ Completed
+                </div>
+              )}
             </div>
-
           </div>
         </div>
       )}
@@ -146,8 +177,14 @@ export default function Task() {
       {/* NIGHT MISSION */}
       {nightMission && (
         <div
-          onClick={() => navigate("/mission/night")}
-          className="border-3 rounded-sm opacity-90 bg-indigo-200 h-[100px] cursor-pointer"
+          onClick={() =>
+            openMission("night", nightCompleted)
+          }
+          className={`border-3 rounded-sm opacity-90 h-[100px] cursor-pointer ${
+            nightCompleted
+              ? "bg-green-200"
+              : "bg-indigo-200"
+          }`}
         >
           <div className="flex border h-full p-3">
 
@@ -158,23 +195,32 @@ export default function Task() {
             />
 
             <div className="leading-4 w-[200px] overflow-hidden mx-3">
-              <h3 className="font-bold">
-                Night Mission
-              </h3>
 
-              <h6>
-                {nightMission.topic}
-              </h6>
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold">
+                  Night Mission
+                </h3>
 
-              <span>
-                {nightMission.description}
-              </span>
+                {nightCompleted && (
+                  <span className="text-green-700 font-bold">
+                    ✓
+                  </span>
+                )}
+              </div>
+
+              <h6>{nightMission.topic}</h6>
+
+              <span>{nightMission.description}</span>
+
+              {nightCompleted && (
+                <div className="text-green-700 font-bold mt-1">
+                  ✅ Completed
+                </div>
+              )}
             </div>
-
           </div>
         </div>
       )}
-
     </section>
   );
 }

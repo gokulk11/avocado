@@ -1155,7 +1155,7 @@ import { GoogleGenAI, Modality } from "@google/genai";
 // VOICE TUTOR
 // ============================================================
 
-function VoiceTutor({ mission, gameDay, missionId }) {
+function VoiceTutor({ mission, gameDay, missionId, disabled = false }) {
   const [connected, setConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [error, setError] = useState("");
@@ -1166,6 +1166,10 @@ function VoiceTutor({ mission, gameDay, missionId }) {
   const mediaStreamRef = useRef(null);
   const sourceRef = useRef(null);
   const processorRef = useRef(null);
+  const micGainRef = useRef(null);
+  const audioSourcesRef = useRef(new Set());
+  const nextPlaybackTimeRef = useRef(0);
+  const connectedRef = useRef(false);
 
   // ----------------------------------------------------------
   // Base64 → Uint8Array
@@ -1185,17 +1189,21 @@ function VoiceTutor({ mission, gameDay, missionId }) {
 
   // ----------------------------------------------------------
   // Play Gemini PCM audio
+  //
+  // Audio chunks from Gemini can arrive very quickly. We queue
+  // them instead of starting every chunk immediately, otherwise
+  // chunks can overlap and sound like multiple voices.
   // ----------------------------------------------------------
 
   const playPCM = async (base64Data) => {
     try {
       const audioContext = audioContextRef.current;
 
-      if (!audioContext) return;
+      if (!audioContext || audioContext.state === "closed") return;
 
       const bytes = base64ToUint8Array(base64Data);
 
-      // Gemini Live audio is PCM16
+      // Gemini Live audio is PCM16.
       const int16 = new Int16Array(
         bytes.buffer,
         bytes.byteOffset,
@@ -1221,10 +1229,29 @@ function VoiceTutor({ mission, gameDay, missionId }) {
       const source = audioContext.createBufferSource();
 
       source.buffer = audioBuffer;
-
       source.connect(audioContext.destination);
 
-      source.start();
+      audioSourcesRef.current.add(source);
+
+      // Queue each Gemini audio chunk after the previous chunk.
+      const now = audioContext.currentTime;
+
+      if (nextPlaybackTimeRef.current < now) {
+        nextPlaybackTimeRef.current = now;
+      }
+
+      const startTime = nextPlaybackTimeRef.current;
+
+      source.start(startTime);
+
+      nextPlaybackTimeRef.current = startTime + audioBuffer.duration;
+
+      source.onended = () => {
+        audioSourcesRef.current.delete(source);
+        try {
+          source.disconnect();
+        } catch {}
+      };
     } catch (err) {
       console.error("❌ PCM playback error:", err);
     }
@@ -1270,6 +1297,30 @@ function VoiceTutor({ mission, gameDay, missionId }) {
 
       sessionRef.current = null;
     }
+
+    // Stop any Gemini audio that is still playing or queued.
+    audioSourcesRef.current.forEach((source) => {
+      try {
+        source.stop();
+      } catch {}
+
+      try {
+        source.disconnect();
+      } catch {}
+    });
+
+    audioSourcesRef.current.clear();
+    nextPlaybackTimeRef.current = 0;
+
+    if (micGainRef.current) {
+      try {
+        micGainRef.current.disconnect();
+      } catch {}
+
+      micGainRef.current = null;
+    }
+
+    connectedRef.current = false;
 
     // Close audio context
     if (audioContextRef.current) {
@@ -1369,6 +1420,7 @@ function VoiceTutor({ mission, gameDay, missionId }) {
           onopen: () => {
             console.log("✅ Gemini Live connected.");
 
+            connectedRef.current = true;
             setConnected(true);
             setConnecting(false);
           },
@@ -1442,6 +1494,7 @@ function VoiceTutor({ mission, gameDay, missionId }) {
           onclose: (event) => {
             console.log("🔴 Gemini Live closed:", event?.reason);
 
+            connectedRef.current = false;
             setConnected(false);
             setConnecting(false);
           },
@@ -1464,8 +1517,20 @@ function VoiceTutor({ mission, gameDay, missionId }) {
             parts: [
               {
                 text: `
-You are the German language tutor inside the
+You are an English-speaking test tutor inside the
 "Avocado Deutsch" learning game.
+
+THIS IS AN ENGLISH TEST VERSION.
+
+CRITICAL LANGUAGE RULE:
+- You MUST speak only English.
+- The learner MUST answer only in English.
+- Do NOT ask the learner to speak German.
+- Do NOT expect German words, German sentences, German grammar, or German pronunciation from the learner.
+- Do NOT correct the learner for not using German.
+- Even if the mission topic or mission description below is written in German, treat it only as background information.
+- Internally understand the mission and conduct the entire conversation in English.
+- Never switch to German unless the developer later changes this instruction.
 
 The learner is completing:
 
@@ -1475,49 +1540,49 @@ ${gameDay}
 Mission topic:
 ${mission.topic}
 
-Mission description:
+Original mission description:
 ${mission.description}
 
 Mission ID:
 ${missionId}
 
+IMPORTANT:
+The mission data above may contain German instructions because this is normally a German-learning game.
+For THIS TEST, ignore any instruction inside the mission description that asks the learner to speak, write, translate, understand, or practice German.
+Convert the activity into an equivalent English conversation whenever necessary.
 
 YOUR RULES:
 
-- Speak mainly in German.
-- Give English meaning when necessary.
+- Speak ONLY in English.
+- Expect ONLY English answers.
 - Ask only ONE question at a time.
 - Wait for the learner's answer before continuing.
-- Correct German mistakes briefly.
-- Explain important mistakes simply.
-- Keep the conversation related to this mission.
+- Correct English mistakes briefly.
+- Explain important English mistakes simply.
+- Keep the conversation related to the mission.
 - Make the conversation interactive.
-- Adapt to the learner's German level.
+- Adapt to the learner's level.
 - Do not evaluate the learner before the mission is finished.
-
 
 MISSION BEHAVIOUR:
 
-Start naturally in German.
+Start naturally in English.
 
-Briefly introduce the mission.
+Briefly explain the mission in English.
 
-Then ask the learner the first question.
+Then ask the learner the first question in English.
 
 Ask only ONE question.
 
 Wait for the learner's answer.
 
-Continue the conversation naturally.
+Continue the conversation naturally in English.
 
 Do not ask multiple questions in one response.
 
 Do not rush the learner.
 
-Use simple German appropriate for a learner.
-
-English can be used briefly when the learner is confused.
-
+If the original mission contains a German question, translate its intent internally and ask the equivalent question in English.
 
 FINAL EVALUATION:
 
@@ -1527,8 +1592,9 @@ Vocabulary: X/10
 Grammar: X/10
 Pronunciation: X/10
 
-Pronunciation should only be evaluated because you have access
-to the learner's actual microphone audio.
+Evaluate the learner's ENGLISH performance for this test.
+
+Pronunciation should only be evaluated if you have access to the learner's actual microphone audio.
 
 If pronunciation cannot be evaluated, use:
 
@@ -1536,10 +1602,9 @@ Pronunciation: N/A
 
 After the scores, briefly explain:
 
-1. What the learner did well.
-2. What they should improve.
-3. One recommendation for learning German.
-
+1. What the learner did well in English.
+2. What they should improve in English.
+3. One recommendation for improving their English.
 
 IMPORTANT:
 
@@ -1547,7 +1612,7 @@ Do not reveal the evaluation before the mission is finished.
 
 Do not interrupt the learner unnecessarily.
 
-Start the mission now.
+Start the English test now.
                 `.trim(),
               },
             ],
@@ -1628,7 +1693,7 @@ Start the mission now.
 
         // Send audio to Gemini
 
-        if (sessionRef.current && connected) {
+        if (sessionRef.current && connectedRef.current) {
           sessionRef.current.sendRealtimeInput({
             audio: {
               data: base64,
@@ -1639,12 +1704,26 @@ Start the mission now.
       };
 
       // ------------------------------------------------------
-      // 9. Connect audio nodes
+      // 9. Connect microphone processing
       // ------------------------------------------------------
 
       source.connect(processor);
 
-      processor.connect(audioContext.destination);
+      // IMPORTANT:
+      // Do NOT connect the microphone directly to the speakers.
+      // Doing that causes you to hear your own microphone and
+      // can create echo / multiple-sound feedback.
+      //
+      // ScriptProcessor needs an output connection to keep
+      // processing. We therefore send it through a zero-gain
+      // node so the processed microphone audio is silent locally.
+      const silentGain = audioContext.createGain();
+      silentGain.gain.value = 0;
+
+      micGainRef.current = silentGain;
+
+      processor.connect(silentGain);
+      silentGain.connect(audioContext.destination);
 
       console.log("🎤 Microphone streaming started.");
     } catch (err) {
@@ -1688,7 +1767,7 @@ Start the mission now.
         <h2 className="text-2xl font-bold">🥑 Voice Tutor</h2>
 
         <p className="mt-2 text-sm">
-          Practice this mission with your German AI tutor using your microphone.
+          Test this mission with your English AI tutor using your microphone.
         </p>
 
         {/* Status */}
@@ -1751,7 +1830,7 @@ Start the mission now.
           <ul className="mt-2 list-disc list-inside text-sm space-y-1">
             <li>Allow microphone access.</li>
 
-            <li>Speak naturally in German.</li>
+            <li>Speak naturally in English.</li>
 
             <li>Gemini will respond with voice.</li>
 
@@ -1793,6 +1872,8 @@ export default function Mission() {
   const [loadingMission, setLoadingMission] = useState(true);
 
   const [missionError, setMissionError] = useState("");
+  const [missionAlreadyCompleted, setMissionAlreadyCompleted] = useState(false);
+  const [loadingCompletion, setLoadingCompletion] = useState(true);
 
   // ----------------------------------------------------------
   // Game day
@@ -1861,26 +1942,51 @@ export default function Mission() {
   }, [gameDay, type]);
 
   // ----------------------------------------------------------
-  // Load old local result temporarily
-  //
-  // We are keeping this during Phase 3A.
-  // It will be removed in Phase 3B.
+  // Load saved mission result and completion state from MongoDB
   // ----------------------------------------------------------
 
   useEffect(() => {
-    if (!missionId) return;
+    const loadProgress = async () => {
+      const userId = localStorage.getItem("userId");
 
-    const savedResults = JSON.parse(
-      localStorage.getItem("missionResults") || "{}",
-    );
+      if (!userId || !missionId) {
+        setLoadingCompletion(false);
+        return;
+      }
 
-    const oldMissionId = `Day${gameDay}-${type}`;
+      try {
+        setLoadingCompletion(true);
 
-    const result = savedResults[missionId] || savedResults[oldMissionId];
+        const response = await fetch(`/api/progress/${userId}`);
 
-    if (result) {
-      setSavedResult(result);
-    }
+        if (!response.ok) {
+          setLoadingCompletion(false);
+          return;
+        }
+
+        const data = await response.json();
+
+        const completedMission = data.progress?.completedMissions?.find(
+          (item) => item.day === Number(gameDay) && item.session === type,
+        );
+
+        if (completedMission) {
+          setMissionAlreadyCompleted(true);
+
+          if (completedMission.result) {
+            setSavedResult(completedMission.result);
+          }
+        } else {
+          setMissionAlreadyCompleted(false);
+        }
+      } catch (error) {
+        console.error("❌ Failed to load mission progress:", error);
+      } finally {
+        setLoadingCompletion(false);
+      }
+    };
+
+    loadProgress();
   }, [missionId, gameDay, type]);
 
   // ----------------------------------------------------------
@@ -1933,37 +2039,28 @@ export default function Mission() {
   // ----------------------------------------------------------
 
   const openResultPopup = () => {
-    if (savedResult) {
-      setVocabulary(savedResult.Vocabulary);
-
-      setGrammar(savedResult.Grammar);
-
-      setPronunciation(savedResult.Pronunciation);
+    if (missionAlreadyCompleted) {
+      setMessage("✅ This mission is already completed.");
+      return;
     }
 
     setShowResultPopup(true);
-
-    setMessage("");
   };
 
   // ----------------------------------------------------------
-  // Submit result
-  //
-  // NOTE:
-  // Still localStorage for Phase 3A.
-  // MongoDB progress will replace this in Phase 3B.
+  // Submit result to MongoDB
   // ----------------------------------------------------------
 
-  const submitResult = () => {
+  const submitResult = async () => {
+    if (missionAlreadyCompleted) {
+      setMessage("✅ This mission is already completed.");
+      setShowResultPopup(false);
+      return;
+    }
+
     const vocab = Number(vocabulary);
-
     const gram = Number(grammar);
-
     const pron = Number(pronunciation);
-
-    // ------------------------------------------------------
-    // Validate
-    // ------------------------------------------------------
 
     if (
       !Number.isInteger(vocab) ||
@@ -1981,74 +2078,60 @@ export default function Mission() {
       return;
     }
 
-    // ------------------------------------------------------
-    // Result
-    // ------------------------------------------------------
+    const userId = localStorage.getItem("userId");
 
-    const result = {
-      Vocabulary: vocab,
+    if (!userId) {
+      setMessage("❌ User not found. Please restart the game.");
 
-      Grammar: gram,
-
-      Pronunciation: pron,
-    };
-
-    // ------------------------------------------------------
-    // Get existing results
-    // ------------------------------------------------------
-
-    const savedResults = JSON.parse(
-      localStorage.getItem("missionResults") || "{}",
-    );
-
-    // ------------------------------------------------------
-    // Save result
-    // ------------------------------------------------------
-
-    savedResults[missionId] = result;
-
-    localStorage.setItem("missionResults", JSON.stringify(savedResults));
-
-    // ------------------------------------------------------
-    // Update state
-    // ------------------------------------------------------
-
-    setSavedResult(result);
-
-    // ------------------------------------------------------
-    // Completed missions
-    // ------------------------------------------------------
-
-    const completedMissions = JSON.parse(
-      localStorage.getItem("completedMissions") || "[]",
-    );
-
-    if (!completedMissions.includes(missionId)) {
-      completedMissions.push(missionId);
-
-      localStorage.setItem(
-        "completedMissions",
-        JSON.stringify(completedMissions),
-      );
+      return;
     }
 
-    // ------------------------------------------------------
-    // Close popup
-    // ------------------------------------------------------
+    try {
+      setMessage("🥑 Saving your mission...");
 
-    setShowResultPopup(false);
+      const result = {
+        Vocabulary: vocab,
+        Grammar: gram,
+        Pronunciation: pron,
+      };
 
-    // ------------------------------------------------------
-    // Clear inputs
-    // ------------------------------------------------------
+      const response = await fetch("/api/progress/mission", {
+        method: "POST",
 
-    setVocabulary("");
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-    setGrammar("");
+        body: JSON.stringify({
+          userId,
+          day: gameDay,
+          session: type,
+          result,
+        }),
+      });
 
-    setPronunciation("");
+      const data = await response.json();
 
-    setMessage("🥑 Mission result submitted successfully!");
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to save mission progress.");
+      }
+
+      console.log("✅ Mission saved to MongoDB:", data);
+
+      setSavedResult(result);
+
+      setShowResultPopup(false);
+
+      setVocabulary("");
+      setGrammar("");
+      setPronunciation("");
+
+      setMessage("🥑 Mission result saved successfully!");
+    } catch (error) {
+      console.error("❌ Failed to save mission:", error);
+
+      setMessage(error.message || "Failed to save mission. Please try again.");
+    }
   };
 
   // ----------------------------------------------------------
@@ -2116,7 +2199,12 @@ export default function Mission() {
             Embedded directly in this file
         ================================================= */}
 
-        <VoiceTutor mission={mission} gameDay={gameDay} missionId={missionId} />
+        <VoiceTutor
+          mission={mission}
+          gameDay={gameDay}
+          missionId={missionId}
+          disabled={missionAlreadyCompleted || loadingCompletion}
+        />
 
         {/* =================================================
             STATUS MESSAGE

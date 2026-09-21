@@ -1,73 +1,49 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getGameDay } from "../utils/gameDay";
 
-export default function ExtraQuest() {
-  const [gameDay, setGameDay] = useState(getGameDay());
-  const [quest, setQuest] = useState(null);
-  const [loading, setLoading] = useState(true);
-
+export default function ExtraQuest({
+  progress,
+  sideQuest: sideQuestFromHome,
+}) {
   const navigate = useNavigate();
 
-  // Update game day
-  useEffect(() => {
-    const updateDay = () => {
-      setGameDay(getGameDay());
-    };
+  const gameDay = Math.min(getGameDay(), 30);
 
-    updateDay();
+  const sideQuest = sideQuestFromHome;
 
-    const timer = setInterval(updateDay, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  // Fetch extra quest from MongoDB
-  useEffect(() => {
-    const fetchQuest = async () => {
-      try {
-        setLoading(true);
-
-        const response = await fetch(
-          `/api/side-quests/day?day=${gameDay}`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch extra quest");
-        }
-
-        const data = await response.json();
-
-        // API returns sideQuests
-        setQuest(data.sideQuests?.[0] || null);
-      } catch (error) {
-        console.error("Error fetching extra quest:", error);
-        setQuest(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchQuest();
-  }, [gameDay]);
-
-  // While loading
-  if (loading) {
+  if (!sideQuest) {
     return null;
   }
 
-  // No quest available
-  if (!quest) {
-    return null;
-  }
+  const completedSideQuests =
+    progress?.completedSideQuests || [];
+
+  const completed = completedSideQuests.some(
+    (quest) =>
+      String(quest.questId) ===
+      String(sideQuest._id)
+  );
+
+  const openQuest = () => {
+    navigate("/extra-quest", {
+      state: {
+        completed,
+      },
+    });
+  };
 
   return (
     <section>
       <div
-        onClick={() => navigate("/extra-quest")}
-        className="border-3 rounded-sm mt-6 opacity-90 bg-green-200 h-[100px]"
+        onClick={openQuest}
+        className={`border-3 rounded-sm mt-6 opacity-90 h-[100px] cursor-pointer ${
+          completed
+            ? "bg-green-200"
+            : "bg-green-200"
+        }`}
       >
         <div className="flex border h-full p-3 overflow-hidden">
+
           <img
             className="w-[70px] my-auto h-max"
             src="/Book2.png"
@@ -75,11 +51,33 @@ export default function ExtraQuest() {
           />
 
           <div className="leading-4 w-[200px] overflow-hidden mx-3 my-auto">
-            <h3 className="font-bold">Extra Quest</h3>
 
-            <h6 className="font-bold">{quest.topic}</h6>
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold">
+                Extra Quest
+              </h3>
 
-            <span>{quest.description}</span>
+              {completed && (
+                <span className="text-green-700 font-bold">
+                  ✓
+                </span>
+              )}
+            </div>
+
+            <h6 className="font-bold">
+              {sideQuest.topic}
+            </h6>
+
+            <span>
+              {sideQuest.description}
+            </span>
+
+            {completed && (
+              <div className="text-green-700 font-bold mt-1">
+                ✅ Completed
+              </div>
+            )}
+
           </div>
         </div>
       </div>
