@@ -1,5 +1,5 @@
 import { connectDB } from "../src/lib/db.js";
-import Mission from "./models/Mission.js";
+import Mission from "../src/models/Mission.js";
 
 export default async function handler(req, res) {
   try {

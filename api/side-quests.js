@@ -1,5 +1,5 @@
 import { connectDB } from "../src/lib/db.js";
-import SideQuest from "./models/SideQuest.js";
+import SideQuest from "../src/models/SideQuest.js";
 
 export default async function handler(req, res) {
   try {

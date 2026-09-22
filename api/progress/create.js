@@ -1,6 +1,6 @@
 import { connectDB } from "../../src/lib/db.js";
-import User from "../models/User.js";
-import Progress from "../models/Progress.js";
+import User from "../../src/models/User.js";
+import Progress from "../../src/models/Progress.js";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {

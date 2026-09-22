@@ -1,5 +1,5 @@
 import { connectDB } from "../../src/lib/db.js";
-import Progress from "../models/Progress.js";
+import Progress from "../../src/models/Progress.js";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
