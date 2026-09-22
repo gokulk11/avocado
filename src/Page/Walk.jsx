@@ -71,6 +71,7 @@ export default function Walk() {
       });
 
       const userData = await userResponse.json();
+      console.log("USER DATA:", userData);
 
       if (!userResponse.ok) {
         throw new Error(
