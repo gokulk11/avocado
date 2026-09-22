@@ -1,15 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import { getGameDay } from "../utils/gameDay";
 
 export default function ExtraQuest({
+  sideQuest,
   progress,
-  sideQuest: sideQuestFromHome,
 }) {
   const navigate = useNavigate();
 
-  const gameDay = Math.min(getGameDay(), 30);
-
-  const sideQuest = sideQuestFromHome;
+  // Data is loaded by Home.jsx.
+  // This component does NOT fetch anything.
 
   if (!sideQuest) {
     return null;
@@ -18,18 +16,15 @@ export default function ExtraQuest({
   const completedSideQuests =
     progress?.completedSideQuests || [];
 
-  const completed = completedSideQuests.some(
-    (quest) =>
-      String(quest.questId) ===
-      String(sideQuest._id)
-  );
+  const completed =
+    completedSideQuests.some(
+      (quest) =>
+        String(quest.questId) ===
+        String(sideQuest._id)
+    );
 
   const openQuest = () => {
-    navigate("/extra-quest", {
-      state: {
-        completed,
-      },
-    });
+    navigate("/extra-quest");
   };
 
   return (
@@ -53,6 +48,7 @@ export default function ExtraQuest({
           <div className="leading-4 w-[200px] overflow-hidden mx-3 my-auto">
 
             <div className="flex items-center justify-between">
+
               <h3 className="font-bold">
                 Extra Quest
               </h3>
@@ -62,6 +58,7 @@ export default function ExtraQuest({
                   ✓
                 </span>
               )}
+
             </div>
 
             <h6 className="font-bold">

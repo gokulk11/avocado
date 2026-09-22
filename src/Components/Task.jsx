@@ -1,75 +1,23 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { getGameDay } from "../utils/gameDay";
-
-export default function Task({ progress }) {
+export default function Task({
+  missions = [],
+  progress,
+  gameDay,
+}) {
   const navigate = useNavigate();
 
-  const [gameDay, setGameDay] = useState(
-    Math.min(getGameDay(), 30)
-  );
-
-  const [missions, setMissions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  // Update game day
-  useEffect(() => {
-    const updateDay = () => {
-      const day = Math.min(getGameDay(), 30);
-      setGameDay(day);
-    };
-
-    updateDay();
-
-    const timer = setInterval(updateDay, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  // Fetch missions from MongoDB API
-  useEffect(() => {
-    const fetchMissions = async () => {
-      try {
-        setLoading(true);
-        setError("");
-
-        const response = await fetch(
-          `/api/missions/day?day=${gameDay}`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch missions");
-        }
-
-        const data = await response.json();
-
-        if (!data.success) {
-          throw new Error(
-            data.error || "Failed to load missions"
-          );
-        }
-
-        setMissions(data.missions || []);
-      } catch (error) {
-        console.error("Mission fetch error:", error);
-        setError("Unable to load missions.");
-        setMissions([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMissions();
-  }, [gameDay]);
+  // Data is loaded by Home.jsx.
+  // This component does NOT fetch anything.
 
   const dayMission = missions.find(
-    (mission) => mission.session === "day"
+    (mission) =>
+      mission.session === "day"
   );
 
   const nightMission = missions.find(
-    (mission) => mission.session === "night"
+    (mission) =>
+      mission.session === "night"
   );
 
   const completedMissions =
@@ -78,50 +26,25 @@ export default function Task({ progress }) {
   const isCompleted = (session) =>
     completedMissions.some(
       (mission) =>
-        mission.day === Number(gameDay) &&
+        Number(mission.day) === Number(gameDay) &&
         mission.session === session
     );
 
-  const dayCompleted = isCompleted("day");
-  const nightCompleted = isCompleted("night");
+  const dayCompleted =
+    isCompleted("day");
 
-  if (loading) {
-    return (
-      <section>
-        <div className="mt-[80px]">
-          Loading missions...
-        </div>
-      </section>
-    );
-  }
+  const nightCompleted =
+    isCompleted("night");
 
-  if (error) {
-    return (
-      <section>
-        <div className="mt-[80px]">
-          {error}
-        </div>
-      </section>
-    );
-  }
-
-  if (!dayMission && !nightMission) {
-    return (
-      <section>
-        <div className="mt-[80px]">
-          No missions available for Day {gameDay}
-        </div>
-      </section>
-    );
-  }
-
-  const openMission = (session, completed) => {
-    navigate(`/mission/${session}`, {
-      state: {
-        completed,
-      },
-    });
+  const openMission = (session) => {
+    navigate(`/mission/${session}`);
   };
+
+  // Do not show "No missions" while data is
+  // still being supplied by Home.
+  if (!dayMission && !nightMission) {
+    return null;
+  }
 
   return (
     <section className="space-y-4">
@@ -130,7 +53,7 @@ export default function Task({ progress }) {
       {dayMission && (
         <div
           onClick={() =>
-            openMission("day", dayCompleted)
+            openMission("day")
           }
           className={`border-3 rounded-sm mt-[80px] opacity-90 h-[100px] cursor-pointer ${
             dayCompleted
@@ -143,7 +66,7 @@ export default function Task({ progress }) {
             <img
               className="w-[70px] my-auto h-max"
               src="/Book2.png"
-              alt=""
+              alt="Day Mission"
             />
 
             <div className="leading-4 w-[200px] overflow-hidden mx-3">
@@ -160,15 +83,20 @@ export default function Task({ progress }) {
                 )}
               </div>
 
-              <h6>{dayMission.topic}</h6>
+              <h6>
+                {dayMission.topic}
+              </h6>
 
-              <span>{dayMission.description}</span>
+              <span>
+                {dayMission.description}
+              </span>
 
               {dayCompleted && (
                 <div className="text-green-700 font-bold mt-1">
                   ✅ Completed
                 </div>
               )}
+
             </div>
           </div>
         </div>
@@ -178,7 +106,7 @@ export default function Task({ progress }) {
       {nightMission && (
         <div
           onClick={() =>
-            openMission("night", nightCompleted)
+            openMission("night")
           }
           className={`border-3 rounded-sm opacity-90 h-[100px] cursor-pointer ${
             nightCompleted
@@ -191,7 +119,7 @@ export default function Task({ progress }) {
             <img
               className="w-[70px] my-auto h-max"
               src="/Book2.png"
-              alt=""
+              alt="Night Mission"
             />
 
             <div className="leading-4 w-[200px] overflow-hidden mx-3">
@@ -208,19 +136,25 @@ export default function Task({ progress }) {
                 )}
               </div>
 
-              <h6>{nightMission.topic}</h6>
+              <h6>
+                {nightMission.topic}
+              </h6>
 
-              <span>{nightMission.description}</span>
+              <span>
+                {nightMission.description}
+              </span>
 
               {nightCompleted && (
                 <div className="text-green-700 font-bold mt-1">
                   ✅ Completed
                 </div>
               )}
+
             </div>
           </div>
         </div>
       )}
+
     </section>
   );
 }

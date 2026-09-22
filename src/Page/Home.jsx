@@ -12,134 +12,166 @@ import { getGameDay } from "../utils/gameDay";
 export default function Home() {
   const navigate = useNavigate();
 
-  const [progress, setProgress] = useState(null);
-  const [loadingProgress, setLoadingProgress] = useState(true);
-  const [sideQuest, setSideQuest] = useState(null);
-
-  // --------------------------------------------------
-  // Current logged-in user
-  // --------------------------------------------------
-
-  const [userName, setUserName] = useState(
-    localStorage.getItem("userName") || ""
-  );
-
   const walkCompleted =
     localStorage.getItem("walkCompleted") === "true";
 
   const letterCompleted =
     localStorage.getItem("letterCompleted") === "true";
 
+  const userName =
+    localStorage.getItem("userName") || "";
+
   const gameDay = Math.min(getGameDay(), 30);
 
+  const cacheKey = `homeData_day_${gameDay}`;
+
+  const [progress, setProgress] = useState(null);
+  const [missions, setMissions] = useState([]);
+  const [sideQuest, setSideQuest] = useState(null);
+
+  // "initialLoading" is only true when there is no cached Home data.
+  const [initialLoading, setInitialLoading] =
+    useState(true);
+
+  const [error, setError] = useState("");
+
   // --------------------------------------------------
-  // Load today's progress and extra quest
+  // Load cached data immediately
   // --------------------------------------------------
 
   useEffect(() => {
+    try {
+      const cached =
+        sessionStorage.getItem(cacheKey);
+
+      if (cached) {
+        const data = JSON.parse(cached);
+
+        setProgress(data.progress || null);
+        setMissions(data.missions || []);
+        setSideQuest(data.sideQuest || null);
+
+        // Do not show the loading screen when cached
+        // data already exists.
+        setInitialLoading(false);
+      }
+    } catch (error) {
+      console.error(
+        "Failed to read Home cache:",
+        error
+      );
+    }
+  }, [cacheKey]);
+
+  // --------------------------------------------------
+  // Fetch fresh Home data
+  // --------------------------------------------------
+
+  useEffect(() => {
+    if (!walkCompleted || !letterCompleted) {
+      setInitialLoading(false);
+      return;
+    }
+
     const loadHomeData = async () => {
-      const userId = localStorage.getItem("userId");
+      const userId =
+        localStorage.getItem("userId");
 
       if (!userId) {
-        setLoadingProgress(false);
+        setError("User not found.");
+        setInitialLoading(false);
         return;
       }
 
       try {
-        setLoadingProgress(true);
+        setError("");
 
-        const [progressResponse, questResponse] =
-          await Promise.all([
-            fetch(`/api/progress/${userId}`),
-            fetch(`/api/side-quests/day?day=${gameDay}`),
-          ]);
+        const [
+          progressResponse,
+          missionsResponse,
+          questResponse,
+        ] = await Promise.all([
+          fetch(`/api/progress/${userId}`),
+          fetch(`/api/missions/day?day=${gameDay}`),
+          fetch(`/api/side-quests/day?day=${gameDay}`),
+        ]);
 
-        if (progressResponse.ok) {
-          const progressData = await progressResponse.json();
-
-          setProgress(progressData.progress || null);
-        }
-
-        if (questResponse.ok) {
-          const questData = await questResponse.json();
-
-          setSideQuest(
-            questData.sideQuests?.[0] || null
+        if (!progressResponse.ok) {
+          throw new Error(
+            "Failed to load progress."
           );
         }
+
+        if (!missionsResponse.ok) {
+          throw new Error(
+            "Failed to load missions."
+          );
+        }
+
+        const progressData =
+          await progressResponse.json();
+
+        const missionsData =
+          await missionsResponse.json();
+
+        let questData = {
+          sideQuests: [],
+        };
+
+        if (questResponse.ok) {
+          questData =
+            await questResponse.json();
+        }
+
+        const freshData = {
+          progress:
+            progressData.progress || null,
+
+          missions:
+            missionsData.missions || [],
+
+          sideQuest:
+            questData.sideQuests?.[0] || null,
+        };
+
+        // Update UI.
+        setProgress(freshData.progress);
+        setMissions(freshData.missions);
+        setSideQuest(freshData.sideQuest);
+
+        // Save for instant display next time.
+        sessionStorage.setItem(
+          cacheKey,
+          JSON.stringify(freshData)
+        );
       } catch (error) {
         console.error(
           "❌ Failed to load Home data:",
           error
         );
+
+        // Only show the error if we don't already
+        // have useful cached data.
+        if (
+          !sessionStorage.getItem(cacheKey)
+        ) {
+          setError(
+            error.message ||
+              "Unable to load today's missions."
+          );
+        }
       } finally {
-        setLoadingProgress(false);
+        setInitialLoading(false);
       }
     };
 
     loadHomeData();
-  }, [gameDay]);
-
-  // --------------------------------------------------
-  // Keep username in sync with localStorage
-  // --------------------------------------------------
-
-  useEffect(() => {
-    const updateUserName = () => {
-      setUserName(
-        localStorage.getItem("userName") || ""
-      );
-    };
-
-    updateUserName();
-
-    window.addEventListener(
-      "storage",
-      updateUserName
-    );
-
-    return () => {
-      window.removeEventListener(
-        "storage",
-        updateUserName
-      );
-    };
-  }, []);
-
-  // --------------------------------------------------
-  // Completion state
-  // --------------------------------------------------
-
-  const completedMissions =
-    progress?.completedMissions || [];
-
-  const completedSideQuests =
-    progress?.completedSideQuests || [];
-
-  const dayCompleted = completedMissions.some(
-    (mission) =>
-      mission.day === Number(gameDay) &&
-      mission.session === "day"
-  );
-
-  const nightCompleted = completedMissions.some(
-    (mission) =>
-      mission.day === Number(gameDay) &&
-      mission.session === "night"
-  );
-
-  const extraQuestCompleted =
-    Boolean(sideQuest) &&
-    completedSideQuests.some(
-      (quest) =>
-        String(quest.questId) ===
-        String(sideQuest._id)
-    );
-
-  const allTodayCompleted =
-    dayCompleted &&
-    nightCompleted &&
-    extraQuestCompleted;
+  }, [
+    cacheKey,
+    gameDay,
+    walkCompleted,
+    letterCompleted,
+  ]);
 
   // --------------------------------------------------
   // First visit
@@ -163,7 +195,7 @@ export default function Home() {
   }
 
   // --------------------------------------------------
-  // Walk finished, but Letter not finished
+  // Letter not completed
   // --------------------------------------------------
 
   if (!letterCompleted) {
@@ -184,15 +216,48 @@ export default function Home() {
   }
 
   // --------------------------------------------------
-  // Trail button text
+  // Completion state
   // --------------------------------------------------
+
+  const completedMissions =
+    progress?.completedMissions || [];
+
+  const completedSideQuests =
+    progress?.completedSideQuests || [];
+
+  const dayCompleted =
+    completedMissions.some(
+      (mission) =>
+        mission.day === Number(gameDay) &&
+        mission.session === "day"
+    );
+
+  const nightCompleted =
+    completedMissions.some(
+      (mission) =>
+        mission.day === Number(gameDay) &&
+        mission.session === "night"
+    );
+
+  const extraQuestCompleted =
+    Boolean(sideQuest) &&
+    completedSideQuests.some(
+      (quest) =>
+        String(quest.questId) ===
+        String(sideQuest._id)
+    );
+
+  const allTodayCompleted =
+    dayCompleted &&
+    nightCompleted &&
+    extraQuestCompleted;
 
   const trailLabel = userName
     ? `🥑 ${userName}'s Trail`
     : "🥑 My Trail";
 
   // --------------------------------------------------
-  // Normal game Home
+  // Home
   // --------------------------------------------------
 
   return (
@@ -203,10 +268,7 @@ export default function Home() {
 
       <ProgressBar />
 
-      {/* --------------------------------------------- */}
-      {/* User Trail */}
-      {/* --------------------------------------------- */}
-
+      {/* Trail */}
       <div className="mt-4">
         <button
           onClick={() => navigate("/trail")}
@@ -216,52 +278,60 @@ export default function Home() {
         </button>
       </div>
 
-      {/* --------------------------------------------- */}
-      {/* All today's missions completed */}
-      {/* --------------------------------------------- */}
-
-      {!loadingProgress && allTodayCompleted && (
-        <div className="mt-5 mb-5 border-4 border-green-700 bg-green-200 rounded-lg p-5 text-center">
-          <div className="text-4xl mb-2">
-            🎉
-          </div>
-
-          <h2 className="text-xl font-bold">
-            Hooray!
-          </h2>
-
-          <p className="font-bold mt-2">
-            You've completed all today's missions!
-          </p>
-
-          <p className="text-sm mt-2">
-            Great job! 🥑
-          </p>
-
-          <p className="text-sm mt-1">
-            Come back tomorrow for a new adventure.
-          </p>
+      {/* Initial loading only when there is no cache */}
+      {initialLoading && (
+        <div className="mt-8 text-center font-bold">
+          Loading today's adventure... 🥑
         </div>
       )}
 
-      {/* --------------------------------------------- */}
-      {/* Main Missions */}
-      {/* --------------------------------------------- */}
+      {/* Error */}
+      {!initialLoading && error && missions.length === 0 && (
+        <div className="mt-8 border-3 rounded-sm bg-red-100 p-4 text-center">
+          {error}
+        </div>
+      )}
 
-      <Task
-        progress={progress}
-        gameDay={gameDay}
-      />
+      {/* Content */}
+      {!initialLoading && (
+        <>
+          {/* All today's missions completed */}
+          {allTodayCompleted && (
+            <div className="mt-5 mb-5 border-4 border-green-700 bg-green-200 rounded-lg p-5 text-center">
+              <div className="text-4xl mb-2">
+                🎉
+              </div>
 
-      {/* --------------------------------------------- */}
-      {/* Extra Quest */}
-      {/* --------------------------------------------- */}
+              <h2 className="text-xl font-bold">
+                Hooray!
+              </h2>
 
-      <ExtraQuest
-        progress={progress}
-        gameDay={gameDay}
-        sideQuest={sideQuest}
-      />
+              <p className="font-bold mt-2">
+                You've completed all today's missions!
+              </p>
+
+              <p className="text-sm mt-2">
+                Great job! 🥑
+              </p>
+
+              <p className="text-sm mt-1">
+                Come back tomorrow for a new adventure.
+              </p>
+            </div>
+          )}
+
+          <Task
+            missions={missions}
+            progress={progress}
+            gameDay={gameDay}
+          />
+
+          <ExtraQuest
+            sideQuest={sideQuest}
+            progress={progress}
+          />
+        </>
+      )}
     </div>
   );
 }

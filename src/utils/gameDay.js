@@ -9,7 +9,7 @@ export function getGameDay() {
   const now = new Date();
   const onboarding = new Date(onboardingTime);
 
-  const TEST_MODE = true;
+  const TEST_MODE = false;
   const GAME_DAY_DURATION = 30 * 1000;
 
   const MAX_GAME_DAY = 30;
