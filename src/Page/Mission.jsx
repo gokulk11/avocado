@@ -1902,7 +1902,7 @@ export default function Mission() {
 
         console.log(`🥑 Loading Day ${gameDay} missions...`);
 
-        const response = await fetch(`/api/missions/day?day=${gameDay}`);
+        const response = await fetch(`/api/missions?day=${gameDay}`);
 
         if (!response.ok) {
           const errorText = await response.text();
